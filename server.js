@@ -5,7 +5,7 @@ import { typeDefs, resolvers } from "./schema.js";
 
 const server = new ApolloServer({
     typeDefs,
-    resolvers,
+    resolvers
 });
 
 const { url } = await startStandaloneServer(server, {

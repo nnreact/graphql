@@ -1,3 +1,8 @@
+// import { users, posts } from "./data.js";
+import { PrismaClient } from "./generated/prisma/index.js";
+
+const prisma = new PrismaClient();
+
 export const typeDefs = `
 type User{
     id: ID!
@@ -29,75 +34,29 @@ type Mutation{
 export const resolvers = {
     Query: {
         users: () => {
-            return [{
-                    id: 1,
-                    name: "John Doe",
-                    age: 25,
-                    gender: "Male",
-                    address: "123 Main St, Anytown, USA"
-                },
-                {
-                    id: 2,
-                    name: "Jane Smith",
-                    age: 30,
-                    gender: "Female",
-                    address: "456 Oak Ave, Anytown, USA"
-                },
-                {
-                    id: 3,
-                    name: "Jim Beam",
-                    age: 45,
-                    gender: "Male",
-                    address: "789 Pine St, Anytown, USA"
-                }, {
-                    id: 4,
-                    name: "Jill Johnson",
-                    age: 35,
-                    gender: "Female",
-                    address: "101 Maple St, Anytown, USA"
-                }, {
-                    id: 5,
-                    name: "Jack Daniels",
-                    age: 50,
-                    gender: "Male",
-                    address: "202 Cedar St, Anytown, USA"
-                }
-            ];
+            return prisma.user.findMany();
         },
         getAllposts: () => {
-            return [{
-                    id: 1,
-                    title: "Post 1",
-                    content: "This is the content of post 1",
-                    authorId: 1
-                },
-                {
-                    id: 2,
-                    title: "Post 2",
-                    content: "This is the content of post 2",
-                    authorId: 2
-                },
-                {
-                    id: 3,
-                    title: "Post 3",
-                    content: "This is the content of post 3",
-                    authorId: 1
-                }
-            ];
+            return prisma.post.findMany();
         }
     },
     Post: {
-        author: (parent) => {
-            const users = resolvers.Query.getAllusers();
-            return users.find(user => user.id == parent.authorId);
+        author: (post) => {
+            return prisma.user.findUnique({
+                where: { id: post.authorId }
+            });
         }
     },
     Mutation: {
         createUser: (_, { id, name, age, gender, address }) => {
-            return { id, name, age, gender, address };
+            return prisma.user.create({
+                data: { id, name, age, gender, address }
+            });
         },
         createPost: (_, { id, title, content, authorId }) => {
-            return { id, title, content, authorId };
+            return prisma.post.create({
+                data: { id, title, content, authorId }
+            });
         }
     }
 }
