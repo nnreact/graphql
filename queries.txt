@@ -1,0 +1,23 @@
+mutation createUserMutation{
+  createUser(id: 1,name: "Mohit",age: 20, gender: "Male",address: "Kurla"){
+    id
+    name
+    address
+  }
+}
+
+mutation UpdateUserMutation($updateId: ID!,$updateName: String,$updateAddress: String){
+  updateUser(id: $updateId,name: $updateName, address: $updateAddress) {
+    id
+    name
+    address
+  }
+}
+
+mutation DeleteuserMutation{
+  deleteUser(id: 1){
+    id
+    name
+    address
+  }
+}
