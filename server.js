@@ -23,7 +23,6 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 
-
 const app = express();
 const httpServer = http.createServer(app);
 
@@ -32,16 +31,32 @@ const server = new ApolloServer({
     resolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
+
 await server.start();
+
 
 app.use(
     '/graphql',
-    cors(),
+    cors({
+        origin: 'http://localhost:5173',
+        credentials: true
+    }),
     express.json(),
     expressMiddleware(server)
 );
 
-// Modified server startup
+app.get("/", (req, res) => {
+    res.send("Hello World");
+});
+app.get("/users", (req, res) => {
+    res.json({
+        users: [
+            { id: 1, name: "John", address: "123 Main St", age: 30, gender: "Male" },
+        ]
+    });
+});
+
+
 await new Promise((resolve) =>
     httpServer.listen({ port: 4000 }, resolve),
 );
